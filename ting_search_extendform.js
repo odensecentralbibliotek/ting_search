@@ -12,6 +12,9 @@
   Drupal.behaviors.clearExtendForm = {
       attach:function(context, settings) {
           $('#extend-form-clear', context).click(function() {
+              $("#edit-language").val('');
+              $("#edit-type").val('');
+              $("#edit-source").val('');
               $("#edit-creator").val('');
               $("#edit-title").val('');
               $("#edit-subject").val('');
@@ -35,6 +38,9 @@
   Drupal.behaviors.clearExtendForm = {
     attach:function(context, settings) {
       $('#extend-form-clear', context).click(function() {
+        $("#edit-language").val('');
+        $("#edit-type").val('');
+        $("#edit-source").val('');
         $("#edit-creator").val('');
         $("#edit-title").val('');
         $("#edit-subject").val('');
@@ -67,7 +73,7 @@
     var val;
     var label;
     $('#edit-advanced .form-item').each(function (i, elem) {
-      if ((val = $('input', elem).val()) && (label = $('label', elem).text())) {
+      if ((val = $('input,select', elem).val()) && (label = $('label', elem).text())) {
         parts.push(label + " = " + val);
         console.dir(parts);
       }
