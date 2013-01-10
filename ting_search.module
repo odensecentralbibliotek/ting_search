@@ -101,21 +101,121 @@ function ting_search_get_extended_actions() {
  * @brief Implementation of hook_form_FORM_ID_alter() for form search_block_form.
  */
 function ting_search_form_search_block_form_alter(&$form, &$form_state, $form_id) {
-  $advanced_fields = array(
-    'dc.creator' => array(
-      'key' => 'creator',
-      'title' => t('Author'),
-      'description' => t('Enter the author name'),
+  $ting_well_data = array(
+    'type' => array_merge(array('' => "Vælg en type"), drupal_map_assoc(array_keys(variable_get('ting_well_types', array())))),
+    'source' => array_merge(array('' => "Vælg en kilde"), drupal_map_assoc(array_keys(variable_get('ting_well_sources', array())))),
+    'language' => array(
+      '' => "Vælg et sprog",
+      'dansk' => "dansk",
+      'engelsk' => "engelsk",
+      'tysk' => "tysk",
+      'norsk' => "norsk",
+      'svensk' => "svensk",
+      'fransk' => "fransk",
+      'arabisk' => "arabisk",
+      'persisk' => "persisk",
+      'tyrkisk' => "tyrkisk",
+      'spansk' => "spansk",
+      'vietnamesisk' => "vietnamesisk",
+      'italiensk' => "italiensk",
+      'russisk' => "russisk",
+      'urdu' => "urdu",
+      'kalaallisut' => "kalaallisut",
+      'polsk' => "polsk",
+      'latin' => "latin",
+      'kurdisk' => "kurdisk",
+      'kroatisk' => "kroatisk",
+      'somalisk' => "somalisk",
+      'kinesisk' => "kinesisk",
+      'serbisk' => "serbisk",
+      'tamilsk' => "tamilsk"
     ),
+    'branch' => array(
+      '' => "Vælg en filial",
+      'hb' => "Hovedbiblioteket",
+      'bo' => "Bolbro",
+      'da' => "Dalum",
+      'lok' => "Historiens Hus",
+      'ho' => "Holluf Pile",
+      'mus' => "Musikbiblioteket",
+      'høj' => "Højby",
+      'ta' => "Tarup",
+      'vo' => "Vollsmose",
+    ),
+  );
+
+  $advanced_fields = array(
     'dc.title' => array(
       'key' => 'title',
       'title' => t('Title'),
       'description' => t('Enter title'),
+      'type' => 'textfield',
+    ),
+    'dc.type' => array(
+      'key' => 'type',
+      'title' => t('Materialetype'),
+      'description' => t('Select type'),
+      'type' => 'select',
+      'options' => $ting_well_data['type'],
+    ),
+    'dc.creator' => array(
+      'key' => 'creator',
+      'title' => t('Author'),
+      'description' => t('Enter the author name'),
+      'type' => 'textfield',
+    ),
+    'dc.language' => array(
+      'key' => 'language',
+      'title' => t('Language'),
+      'description' => t('Select language'),
+      'type' => 'select',
+      'options' => $ting_well_data['language'],
+    ),
+    'dc.subject' => array(
+      'key' => 'cql',
+      'title' => t('Subject'),
+      'description' => t('Enter subject keywords'),
+      'type' => 'textfield',
+    ),
+    'dc.creator' => array(
+      'key' => 'creator',
+      'title' => t('Author'),
+      'description' => t('Enter the author name'),
+      'type' => 'textfield',
     ),
     'dc.subject' => array(
       'key' => 'subject',
       'title' => t('Subject'),
       'description' => t('Enter subject keywords'),
+      'type' => 'textfield',
+    ),
+    'ac.source' => array(
+      'key' => 'source',
+      'title' => t('Kilde'),
+      'description' => t('Select source'),
+      'type' => 'select',
+      'options' => $ting_well_data['source'],
+    ),
+    'dc.dk5' => array(
+      'key' => 'dk5',
+      'title' => t('dk5'),
+      'description' => t('Enter dk5'),
+      'type' => 'textfield',
+    ),
+    'facet.branch' => array(
+      'key' => 'branch',
+      'index' => 'facet',
+      'title' => t('Branch'),
+      'description' => t('Branch'),
+      'type' => 'select',
+      'options' => $ting_well_data['branch'],
+    ),
+    'dc.date' => array(
+      'key' => 'date',
+      'index' => 'facet',
+      'title' => t('Year'),
+      'description' => t('Year'),
+      'type' => 'textfield',
     ),
   );
   // We're going to disable advanced search in
@@ -123,7 +223,7 @@ function ting_search_form_search_block_form_alter(&$form, &$form_state, $form_id
   // When implementing againg, set
   // $advanced = TRUE - just below
   // and re-enable asserts in testTingExtended() in ting_search.test.
-  $advanced = FALSE;
+  $advanced = TRUE;
 
   // Parse extended search query parameters.
   if (arg(0) == 'search') {
@@ -138,7 +238,7 @@ function ting_search_form_search_block_form_alter(&$form, &$form_state, $form_id
     if ($type != 'ting' and !empty($indexes)) {
       $search_query .= " " . implode(' ', $indexes);
       $indexes = array();
-      $advanced = FALSE;
+      $advanced = TRUE;
     }
 
     $form['search_block_form']['#default_value'] = $search_query;
@@ -164,9 +264,10 @@ function ting_search_form_search_block_form_alter(&$form, &$form_state, $form_id
       '#title' => t('Advanced search'),
       '#collapsible' => TRUE,
       '#collapsed' => TRUE,
-      '#weight' => 101,
-      '#prefix' => '<div id="advanced-search-wrapper">',
-      '#suffix' => '</div>',
+      '#weight' => '101',
+      '#class' => 'extendsearch-advanced',
+      '#prefix' => '',
+      '#suffix' => '',
       '#attached' => array(
         'css' => array(
           drupal_get_path('module', 'ting_search') . '/ting_search_extendform.css',
@@ -176,17 +277,30 @@ function ting_search_form_search_block_form_alter(&$form, &$form_state, $form_id
         ),
       ),
     );
+    if (!empty($indexes)) {
+      $form['advanced']['#collapsed'] = FALSE;
+    }
 
     $expand = FALSE;
     foreach ($advanced_fields as $name => $field) {
-      $form['advanced'][$field['key']] = array(
-        '#type' => 'textfield',
-        '#title' => $field['title'],
-        '#size' => 30,
-        '#maxlength' => 64,
-        '#description' => $field['description'],
-        '#default_value' => isset($indexes[$name]) ? $indexes[$name] : '',
-      );
+      if ($field['type'] == 'select') {
+        $form['advanced'][$field['key']] = array(
+          '#type' => $field['type'],
+          '#options' => isset($field['options']) ? $field['options'] : '',
+          '#title' => $field['title'],
+          '#description' => $field['description'],
+          '#default_value' => isset($indexes[$name]) ? $indexes[$name] : '',
+        );
+      } else {
+        $form['advanced'][$field['key']] = array(
+          '#type' => $field['type'],
+          '#title' => $field['title'],
+          '#size' => 30,
+          '#maxlength' => 64,
+          '#description' => $field['description'],
+          '#default_value' => isset($indexes[$name]) ? $indexes[$name] : '',
+        );
+      }
     }
   }
   $form['#submit'] = array('ting_search_submit');
@@ -711,8 +825,18 @@ function ting_search_submit($form, &$form_state) {
     'creator' => 'dc.creator',
     'title' => 'dc.title',
     'subject' => 'dc.subject',
+    'language' => 'dc.language',
+    'type' => 'dc.type',
+    'source' => 'ac.source',
+    'dk5' => 'dc.subject',
+    'date' => 'dc.date',
   );
 
+  $extended_facet_fields = array(
+    'branch' => 'facets[]=facet.branch',
+  );
+
+  // Extended fields.
   foreach ($extended_fields as $name => $index) {
     if (!empty($form_state['values'][$name])) {
       $value = $form_state['values'][$name];
@@ -729,6 +853,13 @@ function ting_search_submit($form, &$form_state) {
   }
   $q = join(' AND ', $q);
 
+  // Extended facet fields.
+  $f = $form_state['values']['branch'];
+  if ($f != "") {
+    $controls['facets[]'] = 'facet.branch:' . $f;
+  }
+
+  // Controls.
   $s = $form_state['values']['sort'];
   if ( $s != "" ) {
     $controls['sort'] = $s;
