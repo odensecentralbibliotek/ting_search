@@ -704,6 +704,7 @@ function ting_search_submit($form, &$form_state) {
 
   $form_id = $form['form_id']['#value']; // 'search_block_form'
   $keys = $form_state['values'][$form_id];
+  $keys = str_replace(array('(', ')', '[', ']'), array('\(', '\)', '\[', '\]'), $keys);
   $fields = array();
 
   $extended_fields = array(
