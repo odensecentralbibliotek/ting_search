@@ -100,7 +100,7 @@ function ting_search_get_extended_actions() {
 /**
  * @brief Implementation of hook_form_FORM_ID_alter() for form search_block_form.
  */
-function ting_search_form_search_block_form_alter(&$form, &$form_state, $form_id) {
+function ting_search_form_search_form_alter(&$form, &$form_state, $form_id) {
   $ting_well_data = array(
     'type' => array_merge(array('' => "Vælg en type"), drupal_map_assoc(array_keys(variable_get('ting_well_types', array())))),
     'source' => array_merge(array('' => "Vælg en kilde"), drupal_map_assoc(array_keys(variable_get('ting_well_sources', array())))),
@@ -241,7 +241,7 @@ function ting_search_form_search_block_form_alter(&$form, &$form_state, $form_id
       $advanced = TRUE;
     }
 
-    $form['search_block_form']['#default_value'] = $search_query;
+    $form['basic']['keys']['#default_value'] = $search_query;
   }
 
   $form['sort'] = array(
@@ -816,8 +816,7 @@ function ting_search_submit($form, &$form_state) {
     unset($_GET['destination']);
   }
 
-  $form_id = $form['form_id']['#value']; // 'search_block_form'
-  $keys = $form_state['values'][$form_id];
+  $keys = $form_state['values']['keys'];
   $keys = str_replace(array('(', ')', '[', ']'), array('\(', '\)', '\[', '\]'), $keys);
   $fields = array();
 
@@ -892,6 +891,9 @@ function ting_search_submit($form, &$form_state) {
         $search_info = $search_engine;
         break;
       }
+    }
+    if (empty($search_info)) {
+      $search_info = search_get_default_module_info();
     }
   }
   if (!empty($search_info['path']) && in_array($search_info['module'], variable_get('search_active_modules', array()))) {

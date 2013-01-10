@@ -44,7 +44,7 @@
         $("#edit-creator").val('');
         $("#edit-title").val('');
         $("#edit-subject").val('');
-        $("#edit-search-block-form--2").val('');
+        $("#edit-search-form--2").val('');
         return false;
       });
     }
@@ -65,7 +65,7 @@
 
   Drupal.extendedQueryDisplay = function() {
 
-    var queryText = $("input").filter("[name='search_block_form']").val()
+    var queryText = $("input").filter("[name='keys']").val()
     var parts = [];
     if (queryText) {
       parts.push(queryText);
