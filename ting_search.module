@@ -130,11 +130,11 @@ function ting_search_form_search_form_alter(&$form, &$form_state, $form_id) {
       'urdu' => "urdu",
       'vietnamesisk' => "vietnamesisk",
     ),
-    'branch' =>  array_merge(array('' => "Vælg en kilde"), ding_provider_invoke('reservation', 'pickup_branches')),
+    'branch' =>  array_merge(array('' => t('Choose a branch')), ding_provider_invoke('reservation', 'pickup_branches')),
     'category' => array(
       '' => t('Choose a target'),
-      'voksenmaterialer' => t('Adult'),
       'børnematerialer' => t('Children'),
+      'voksenmaterialer' => t('Adult'),
     ),
   );
 
