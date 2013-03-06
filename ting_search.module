@@ -106,41 +106,35 @@ function ting_search_form_search_form_alter(&$form, &$form_state, $form_id) {
     'source' => array_merge(array('' => "Vælg en kilde"), drupal_map_assoc(array_keys(variable_get('ting_well_sources', array())))),
     'language' => array(
       '' => "Vælg et sprog",
+      'arabisk' => "arabisk",
       'dansk' => "dansk",
       'engelsk' => "engelsk",
-      'tysk' => "tysk",
-      'norsk' => "norsk",
-      'svensk' => "svensk",
       'fransk' => "fransk",
-      'arabisk' => "arabisk",
-      'persisk' => "persisk",
-      'tyrkisk' => "tyrkisk",
-      'spansk' => "spansk",
-      'vietnamesisk' => "vietnamesisk",
       'italiensk' => "italiensk",
-      'russisk' => "russisk",
-      'urdu' => "urdu",
       'kalaallisut' => "kalaallisut",
-      'polsk' => "polsk",
-      'latin' => "latin",
-      'kurdisk' => "kurdisk",
-      'kroatisk' => "kroatisk",
-      'somalisk' => "somalisk",
       'kinesisk' => "kinesisk",
+      'kroatisk' => "kroatisk",
+      'kurdisk' => "kurdisk",
+      'latin' => "latin",
+      'norsk' => "norsk",
+      'persisk' => "persisk",
+      'polsk' => "polsk",
+      'russisk' => "russisk",
       'serbisk' => "serbisk",
-      'tamilsk' => "tamilsk"
+      'somalisk' => "somalisk",
+      'spansk' => "spansk",
+      'svensk' => "svensk",
+      'tamilsk' => "tamilsk",
+      'tyrkisk' => "tyrkisk",
+      'tysk' => "tysk",
+      'urdu' => "urdu",
+      'vietnamesisk' => "vietnamesisk",
     ),
-    'branch' => array(
-      '' => "Vælg en filial",
-      'hb' => "Hovedbiblioteket",
-      'bo' => "Bolbro",
-      'da' => "Dalum",
-      'lok' => "Historiens Hus",
-      'ho' => "Holluf Pile",
-      'mus' => "Musikbiblioteket",
-      'høj' => "Højby",
-      'ta' => "Tarup",
-      'vo' => "Vollsmose",
+    'branch' =>  array_merge(array('' => "Vælg en kilde"), ding_provider_invoke('reservation', 'pickup_branches')),
+    'category' => array(
+      '' => t('Choose a target'),
+      'voksenmaterialer' => t('Adult'),
+      'børnematerialer' => t('Children'),
     ),
   );
 
@@ -216,6 +210,14 @@ function ting_search_form_search_form_alter(&$form, &$form_state, $form_id) {
       'title' => t('Year'),
       'description' => t('Year'),
       'type' => 'textfield',
+    ),
+    'facet.category' => array(
+      'key' => 'category',
+      'index' => 'facet',
+      'title' => t('Target'),
+      'description' => t('Target'),
+      'type' => 'select',
+      'options' => $ting_well_data['category'],
     ),
   );
   // We're going to disable advanced search in
@@ -828,11 +830,14 @@ function ting_search_submit($form, &$form_state) {
     'type' => 'dc.type',
     'source' => 'ac.source',
     'dk5' => 'dc.subject',
+    'branch' => 'facet.branch',
+    'category' => 'facet.category',
     'date' => 'dc.date',
   );
 
   $extended_facet_fields = array(
     'branch' => 'facets[]=facet.branch',
+    'category' => 'facets[]=facet.category',
   );
 
   // Extended fields.
@@ -858,6 +863,10 @@ function ting_search_submit($form, &$form_state) {
     $controls['facets[]'] = 'facet.branch:' . $f;
   }
 
+  $f = $form_state['values']['category'];
+  if ($f != "") {
+    $controls['facets[]'] = 'facet.category:' . $f;
+  }
   // Controls.
   $s = $form_state['values']['sort'];
   if ( $s != "" ) {
