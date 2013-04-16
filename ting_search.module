@@ -131,11 +131,8 @@ function ting_search_form_search_form_alter(&$form, &$form_state, $form_id) {
       'vietnamesisk' => "vietnamesisk",
     ),
     'branch' =>  array_merge(array('' => t('Choose a branch')), ding_provider_invoke('reservation', 'pickup_branches')),
-    'category' => array(
-      '' => t('Choose a target'),
-      'børnematerialer' => t('Children'),
-      'voksenmaterialer' => t('Adult'),
-    ),
+    //Needs DDElibra trimning to limit values.
+    'department' => array_merge(array('' => t('Choose a target')), alma_client_invoke('get_departments')),
   );
 
   $advanced_fields = array(
@@ -211,13 +208,13 @@ function ting_search_form_search_form_alter(&$form, &$form_state, $form_id) {
       'description' => t('Year'),
       'type' => 'textfield',
     ),
-    'facet.category' => array(
-      'key' => 'category',
+    'facet.department' => array(
+      'key' => 'department',
       'index' => 'facet',
       'title' => t('Target'),
       'description' => t('Target'),
       'type' => 'select',
-      'options' => $ting_well_data['category'],
+      'options' => $ting_well_data['department'],
     ),
   );
   // We're going to disable advanced search in
@@ -831,13 +828,13 @@ function ting_search_submit($form, &$form_state) {
     'source' => 'ac.source',
     'dk5' => 'facet.dk5',
     'branch' => 'facet.branch',
-    'category' => 'facet.category',
+    'department' => 'facet.department',
     'date' => 'dc.date',
   );
 
   $extended_facet_fields = array(
     'branch' => 'facets[]=facet.branch',
-    'category' => 'facets[]=facet.category',
+    'department' => 'facets[]=facet.department',
   );
 
   // Extended fields.
@@ -863,9 +860,9 @@ function ting_search_submit($form, &$form_state) {
     $controls['facets[]'] = 'facet.branch:' . $f;
   }
 
-  $f = $form_state['values']['category'];
+  $f = $form_state['values']['department'];
   if ($f != "") {
-    $controls['facets[]'] = 'facet.category:' . $f;
+    $controls['facets[]'] = 'facet.department:' . $f;
   }
   // Controls.
   $s = $form_state['values']['sort'];
