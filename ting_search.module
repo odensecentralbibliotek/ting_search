@@ -816,7 +816,10 @@ function ting_search_submit($form, &$form_state) {
   }
 
   $keys = $form_state['values']['keys'];
-  $keys = str_replace(array('(', ')', '[', ']'), array('\(', '\)', '\[', '\]'), $keys);
+  //Escape paranteser men ikke allerede escapede \( \)
+  $pattern = '/([^\\\\])(\(|\)|\[|\])/';
+  $replacement = '$1\\\\$2';
+  $keys = preg_replace($pattern, $replacement, $keys);
   $fields = array();
 
   $extended_fields = array(
