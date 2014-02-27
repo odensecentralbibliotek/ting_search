@@ -216,6 +216,12 @@ function ting_search_form_search_form_alter(&$form, &$form_state, $form_id) {
       'type' => 'select',
       'options' => $ting_well_data['department'],
     ),
+      'ccl_search' => array(
+      'key' => 'ccl',
+      'title' => t('ccl search'),
+      'description' => t('Enter ccl keywords without "" brackets'),
+      'type' => 'textfield',
+    ),
   );
   // We're going to disable advanced search in
   // the first version, and implement later on.
@@ -443,8 +449,22 @@ function ting_search_search_execute($keys = NULL, $conditions = NULL) {
     if (!empty($conditions['sort'])) {
       $options['sort'] = $conditions['sort'];
     }
+   
+    
+      if (stripos($keys, 'ccl_search=') == TRUE) {
+      $ccl_search = substr(strstr($keys,'ccl_search='), 12, -2);
+      $results = alma_search_search($ccl_search, $start_no + 1, $number_of_records, $options);
 
+      $data_well_query = '';
+
+      if (isset($results) && isset($results['alma_ids'])) {
+
+        $data_well_query = join(' OR ', $results['alma_ids']);
+      }
+      $searchResult = ting_do_search($data_well_query, $page + 1, $resultsPerPage, $options);
+    }else {
     $searchResult = ting_do_search($query, $page + 1, $resultsPerPage, $options);
+    }    
     if (isset($searchResult->collections)) {
       $searchResult->search_key = $keys;
 
@@ -833,6 +853,7 @@ function ting_search_submit($form, &$form_state) {
     'branch' => 'facet.branch',
     'department' => 'facet.department',
     'date' => 'dc.date',
+    'ccl' => 'ccl_search',
   );
 
   $extended_facet_fields = array(
