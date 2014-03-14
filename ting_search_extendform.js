@@ -75,7 +75,6 @@
     $('#edit-advanced .form-item').each(function (i, elem) {
       if ((val = $('input,select', elem).val()) && (label = $('label', elem).text())) {
         parts.push(label + " = " + val);
-        console.dir(parts);
       }
     });
 
