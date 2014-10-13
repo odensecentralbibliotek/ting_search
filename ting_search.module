@@ -40,6 +40,7 @@ function ting_search_menu_alter(&$items) {
   $items['search/meta']['title'] = 'Universal Search';
   $items['search/meta/%menu_tail']['title'] = 'Universal Search';
   $items['search/meta/%menu_tail']['load arguments'] = array('%map', '%index');
+    
 }
 
 /**
@@ -155,51 +156,51 @@ function ting_search_form_search_form_alter(&$form, &$form_state, $form_id) {
   }
   
   $advanced_fields = array(
-    'dc.title' => array(
+    'term.title' => array(
       'key' => 'title',
       'title' => t('Title'),
       'description' => t('Enter title'),
       'type' => 'textfield',
     ),
-    'dc.type' => array(
+    'term.type' => array(
       'key' => 'type',
       'title' => t('Materialetype'),
       'description' => t('Select type'),
       'type' => 'select',
       'options' => $ting_well_data['type'],
     ),
-    'dc.creator' => array(
+    'term.creator' => array(
       'key' => 'creator',
       'title' => t('Author'),
       'description' => t('Enter the author name'),
       'type' => 'textfield',
     ),
-    'dc.language' => array(
+    'term.language' => array(
       'key' => 'language',
       'title' => t('Language'),
       'description' => t('Select language'),
       'type' => 'select',
       'options' => $ting_well_data['language'],
     ),
-    'dc.subject' => array(
+    'term.subject' => array(
       'key' => 'cql',
       'title' => t('Subject'),
       'description' => t('Enter subject keywords'),
       'type' => 'textfield',
     ),
-    'dc.creator' => array(
+    'term.creator' => array(
       'key' => 'creator',
       'title' => t('Author'),
       'description' => t('Enter the author name'),
       'type' => 'textfield',
     ),
-    'dc.subject' => array(
+    'term.subject' => array(
       'key' => 'subject',
       'title' => t('Subject'),
       'description' => t('Enter subject keywords'),
       'type' => 'textfield',
     ),
-    'ac.source' => array(
+    'term.source' => array(
       'key' => 'source',
       'title' => t('Kilde'),
       'description' => t('Select source'),
@@ -220,7 +221,7 @@ function ting_search_form_search_form_alter(&$form, &$form_state, $form_id) {
       'type' => 'select',
       'options' => $ting_well_data['branch'],
     ),
-    'dc.date' => array(
+    'term.date' => array(
       'key' => 'date',
       'index' => 'facet',
       'title' => t('Year'),
@@ -845,16 +846,16 @@ function ting_search_submit($form, &$form_state) {
   $fields = array();
 
   $extended_fields = array(
-    'creator' => 'dc.creator',
-    'title' => 'dc.title',
-    'subject' => 'dc.subject',
-    'language' => 'dc.language',
-    'type' => 'dc.type',
-    'source' => 'ac.source',
+    'creator' => 'term.creator',
+    'title' => 'term.title',
+    'subject' => 'term.subject',
+    'language' => 'term.language',
+    'type' => 'term.type',
+    'source' => 'term.source',
     'dk5' => 'facet.dk5',
     'branch' => 'facet.branch',
     'department' => 'facet.department',
-    'date' => 'dc.date',
+    'date' => 'term.date',
   );
 
   $extended_facet_fields = array(
@@ -899,7 +900,6 @@ function ting_search_submit($form, &$form_state) {
   if ( $s != "" ) {
     $controls['size'] = $s;
   }
-
 
   // Check to see if the form was submitted empty.
   // If it is empty, display an error message.
