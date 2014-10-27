@@ -260,7 +260,7 @@ function ting_search_form_search_form_alter(&$form, &$form_state, $form_id) {
       $advanced = TRUE;
     }
 
-    $form['basic']['keys']['#default_value'] = $search_query;
+    $form['basic']['keys']['#default_value'] = ShortenCqlQueries(array($search_query));
   }
 
   $form['sort'] = array(
@@ -874,7 +874,9 @@ function ting_search_submit($form, &$form_state) {
   $q = array();
   if (!empty($keys)) {
     $q[] = $keys;
+    $q = ExpandCqlQueries($q);
   }
+  
   if (!empty($fields)) {
     $q[] = '(' . implode(' AND ', $fields) . ')';
   }
@@ -929,6 +931,7 @@ function ting_search_submit($form, &$form_state) {
   }
   if (!empty($search_info['path']) && in_array($search_info['module'], variable_get('search_active_modules', array()))) {
     $form_state['redirect'] = FALSE;
+
     $url = 'search/' . $search_info['path']. '/' . trim($q);
     drupal_goto($url, array('query' => $controls));
   }
@@ -936,7 +939,163 @@ function ting_search_submit($form, &$form_state) {
     form_set_error(NULL, t('Search is currently disabled.'), 'error');
   }
 }
-
+function ExpandCqlQueries($q)
+{
+    $namespaces = InitCqlNamespaces();
+    for($i = 0; $i <= sizeof($q);$i++)
+    {
+       foreach($namespaces as $key => $value)
+       {
+           foreach($value as $cqlterm)
+           {
+               if(!isset($q[$i]))
+               {
+                   continue;
+               }
+               if(strpos($q[$i], $cqlterm ."=") !== FALSE && strpos($q[$i],$key.".".$cqlterm ."=") === FALSE)
+               {
+                   $q[$i] = str_replace($cqlterm ."=", $key.".".$cqlterm ."=" , $q[$i]);
+               }
+           }
+       }
+        
+    }
+    return $q;
+}
+function ShortenCqlQueries($q)
+{
+    $namespaces = InitCqlNamespaces();
+    for($i = 0; $i <= sizeof($q);$i++)
+    {
+       foreach($namespaces as $key => $value)
+       {
+           foreach($value as $cqlterm)
+           {
+               if(!isset($q[$i]))
+               {
+                   continue;
+               }
+               if(strpos($q[$i], $key.".".$cqlterm ."=") !== FALSE)
+               {
+                   $q[$i] = str_replace($key.".".$cqlterm ."=",$cqlterm ."=" , $q[$i]);
+               }
+           }
+       }
+        
+    }
+    
+    return $q;
+}
+function InitCqlNamespaces()
+{
+    //Check if already generated once , else reload.
+    if(variable_get('Cqlterms') != null)
+    {
+        return variable_get('Cqlterms');
+    }
+    else
+    {
+        $namespaces = array();
+        $namespaces["dkcclphrase"] = array();
+        $namespaces["dkcclterm"][] = "ac"; //using short hand might give problems ? 
+        $namespaces["dkcclterm"][] = "ag";
+        $namespaces["dkcclterm"][] = "aj";
+        $namespaces["dkcclterm"][] = "ar";
+        $namespaces["dkcclterm"][] = "au";
+        $namespaces["dkcclterm"][] = "bc";
+        $namespaces["dkcclterm"][] = "br";
+        $namespaces["dkcclterm"][] = "bs";
+        $namespaces["dkcclterm"][] = "cl";
+        $namespaces["dkcclterm"][] = "co";
+        $namespaces["dkcclterm"][] = "cp";
+        $namespaces["dkcclterm"][] = "db";
+        $namespaces["dkcclterm"][] = "df";
+        $namespaces["dkcclterm"][] = "dk";
+        $namespaces["dkcclterm"][] = "ds";
+        $namespaces["dkcclterm"][] = "ed";
+        $namespaces["dkcclterm"][] = "ef";
+        $namespaces["dkcclterm"][] = "ej";
+        $namespaces["dkcclterm"][] = "ek";
+        $namespaces["dkcclterm"][] = "em";
+        $namespaces["dkcclterm"][] = "en";
+        $namespaces["dkcclterm"][] = "ep";
+        $namespaces["dkcclterm"][] = "es";
+        $namespaces["dkcclterm"][] = "fb";
+        $namespaces["dkcclterm"][] = "fg";
+        $namespaces["dkcclterm"][] = "fl";
+        $namespaces["dkcclterm"][] = "fm";
+        $namespaces["dkcclterm"][] = "fo";
+        $namespaces["dkcclterm"][] = "fv";
+        $namespaces["dkcclterm"][] = "gd";
+        $namespaces["dkcclterm"][] = "hm";
+        $namespaces["dkcclterm"][] = "ht";
+        $namespaces["dkcclterm"][] = "ib";
+        $namespaces["dkcclterm"][] = "ic";
+        $namespaces["dkcclterm"][] = "id";
+        $namespaces["dkcclterm"][] = "im";
+        $namespaces["dkcclterm"][] = "in";
+        $namespaces["dkcclterm"][] = "ip";
+        $namespaces["dkcclterm"][] = "ir";
+        $namespaces["dkcclterm"][] = "is";
+        $namespaces["dkcclterm"][] = "ix";
+        $namespaces["dkcclterm"][] = "ka";
+        $namespaces["dkcclterm"][] = "ke";
+        $namespaces["dkcclterm"][] = "kg";
+        $namespaces["dkcclterm"][] = "kk";
+        $namespaces["dkcclterm"][] = "kl";
+        $namespaces["dkcclterm"][] = "km";
+        $namespaces["dkcclterm"][] = "kn";
+        $namespaces["dkcclterm"][] = "ko";
+        $namespaces["dkcclterm"][] = "kr";
+        $namespaces["dkcclterm"][] = "kx";
+        $namespaces["dkcclterm"][] = "ld";
+        $namespaces["dkcclterm"][] = "li";
+        $namespaces["dkcclterm"][] = "ll";
+        $namespaces["dkcclterm"][] = "ln";
+        $namespaces["dkcclterm"][] = "ma";
+        $namespaces["dkcclterm"][] = "me";
+        $namespaces["dkcclterm"][] = "mo";
+        $namespaces["dkcclterm"][] = "ms";
+        $namespaces["dkcclterm"][] = "nb";
+        $namespaces["dkcclterm"][] = "nl";
+        $namespaces["dkcclterm"][] = "nm";
+        $namespaces["dkcclterm"][] = "no";
+        $namespaces["dkcclterm"][] = "nr";
+        $namespaces["dkcclterm"][] = "ns";
+        $namespaces["dkcclterm"][] = "nt";
+        $namespaces["dkcclterm"][] = "nv";
+        $namespaces["dkcclterm"][] = "oc";
+        $namespaces["dkcclterm"][] = "ok";
+        $namespaces["dkcclterm"][] = "op";
+        $namespaces["dkcclterm"][] = "ou";
+        $namespaces["dkcclterm"][] = "pa";
+        $namespaces["dkcclterm"][] = "pe";
+        $namespaces["dkcclterm"][] = "po";
+        $namespaces["dkcclterm"][] = "pu";
+        $namespaces["dkcclterm"][] = "rt";
+        $namespaces["dkcclterm"][] = "se";
+        $namespaces["dkcclterm"][] = "sf";
+        $namespaces["dkcclterm"][] = "so";
+        $namespaces["dkcclterm"][] = "sp";
+        $namespaces["dkcclterm"][] = "st";
+        $namespaces["dkcclterm"][] = "tf";
+        $namespaces["dkcclterm"][] = "tg";
+        $namespaces["dkcclterm"][] = "ti";
+        $namespaces["dkcclterm"][] = "ts";
+        $namespaces["dkcclterm"][] = "tt";
+        $namespaces["dkcclterm"][] = "uk";
+        $namespaces["dkcclterm"][] = "ul";
+        $namespaces["dkcclterm"][] = "ut";
+        $namespaces["dkcclterm"][] = "uu";
+        $namespaces["dkcclterm"][] = "vp";
+        $namespaces["dkcclterm"][] = "ww";
+        $namespaces["dkcclterm"][] = "år";
+        
+        variable_set('Cqlterms', $namespaces);
+        return $namespaces;
+    }
+    
+}
 /**
  * Attempt to quote reserved words in a search query.
  *
