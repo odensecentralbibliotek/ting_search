@@ -436,7 +436,12 @@ function ting_search_search_execute($keys = NULL, $conditions = NULL) {
   $options    = array();
   $results    = array();
   $facetArray = array();
-   if (stripos($keys, 'dc.language=') == TRUE) {
+   if (!isset($conditions['sort']) && stripos($keys, 'dc.language=') == TRUE) {
+     $conditions['sort'] = "date_descending";
+   }
+   if ( !isset($conditions['sort']) && stripos($keys, 'dc.type=dvd') == TRUE || 
+           stripos($keys, 'dc.type=dvd-rom') == TRUE)
+   {
      $conditions['sort'] = "date_descending";
    }
   $query      = '(' . _ting_search_quote($keys) . ')';
