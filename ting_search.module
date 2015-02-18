@@ -471,9 +471,20 @@ function ting_search_search_execute($keys = NULL, $conditions = NULL) {
 
     if (!empty($conditions['sort'])) {
       $options['sort'] = $conditions['sort'];
+    }   
+    //check if request has been done before , if it has return the cached response saving us a lookup
+    //in the data well.
+    $CachedQuery = ting_cache_get($query . "?page=" . $page);
+    if($CachedQuery == null)
+    {
+         $searchResult = ting_do_search($query, $page + 1, $resultsPerPage, $options);
+         ting_cache_set($query . "?page=" . $page,$searchResult);
     }
-
-    $searchResult = ting_do_search($query, $page + 1, $resultsPerPage, $options);
+    else
+    {
+        //return the cached well3 response. Saves allot of time.
+        $searchResult = $CachedQuery;
+    }
     if (isset($searchResult->collections)) {
       $searchResult->search_key = $keys;
 
