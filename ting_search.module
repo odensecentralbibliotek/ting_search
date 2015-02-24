@@ -442,7 +442,7 @@ function ting_search_search_execute($keys = NULL, $conditions = NULL) {
   $options    = array();
   $results    = array();
   $facetArray = array();
-  //Only set sorting , if user did not overwrite it himself already.
+    //Only set sorting , if user did not overwrite it himself already.
    if (!isset($conditions['sort']) && stripos($keys, 'term.language=') == TRUE) {
      $conditions['sort'] = "date_descending";
    }
@@ -453,31 +453,33 @@ function ting_search_search_execute($keys = NULL, $conditions = NULL) {
    }
    $query      = oc_query_parser(_ting_search_quote($keys));
    $options['numFacets'] = 25;
-   module_load_include('client.inc', 'ting');
   // Extend query with selected facets
-  if (isset($conditions['facets']) && $conditions['facets'] != NULL) {
-    $facets = $conditions['facets'];
-    foreach ($facets as $facet) {
-      $facet = explode(':', $facet, 2);
-      if ($facet[0]) {
+    if (isset($conditions['facets']) && $conditions['facets'] != NULL) {
+      $facets = $conditions['facets'];
+      foreach ($facets as $facet) {
+        $facet = explode(':', $facet, 2);
+        if ($facet[0]) {
         $facetArray[] = $facet[0] . '="' . rawurldecode($facet[1]) . '"';
+        }
       }
-    }
 
     $query .= ' AND ' . implode(' AND ', $facetArray); 
-  }
-  try {
-    $page = pager_find_page();
+    }
+
+    $search_result = NULL;
+    try {
+      $page = pager_find_page();
 
     $resultsPerPage = variable_get('ting_search_results_per_page', 10);
-    if (!empty($conditions['size'])) {
+      if (!empty($conditions['size'])) {
       $resultsPerPage = $conditions['size'];
-    }
+      }
 
-    if (!empty($conditions['sort'])) {
-      $options['sort'] = $conditions['sort'];
-    }
+      if (!empty($conditions['sort'])) {
+        $options['sort'] = $conditions['sort'];
+      }
 
+    module_load_include('client.inc', 'ting');
     $searchResult = ting_do_search($query, $page + 1, $resultsPerPage, $options);
     if (isset($searchResult->collections)) {
       $searchResult->search_key = $keys;
@@ -489,25 +491,27 @@ function ting_search_search_execute($keys = NULL, $conditions = NULL) {
       pager_default_initialize($total_results, $resultsPerPage);
 
       foreach ($searchResult->collections as &$collection) {
-        $build = ting_collection_view($collection, 'teaser');
-        $uri = entity_uri('ting_collection', $collection);
-        $results[] = array(
-          'link' => url($uri['path'], $uri['options']),
-          'type' => '',
-          'title' => $collection->title,
-          'user' => '',
-          'date' => '',
-          'snippet' => drupal_render($build),
-        );
+          $build = ting_collection_view($collection, 'teaser');
+          $uri = entity_uri('ting_collection', $collection);
+          $results[] = array(
+            'link' => url($uri['path'], $uri['options']),
+            'type' => '',
+            'title' => $collection->title,
+            'user' => '',
+            'date' => '',
+            'snippet' => drupal_render($build),
+          );
+        }
       }
     }
-  }
-  catch (TingClientException $e) {
-    // TODO: Log the error.
-    $results = array();
-  }
+    catch (TingClientException $e) {
+      watchdog_exception('ting_search', $e);
+      $results = array();
+    }
 
-  drupal_static('ting_search_results', $searchResult);
+    // Save search result for usage by facet modules etc.
+    $ting_search_results = &drupal_static('ting_search_results');
+    $ting_search_results = $search_result;
 
   return $results;
 }
@@ -820,7 +824,7 @@ function ting_search_block_view($delta = '') {
       drupal_add_css(drupal_get_path('module', 'ting_search') . '/ting_search_extendform.css');
       drupal_add_js(drupal_get_path('module', 'ting_search') . '/ting_search_extendform.js');
       $block['subject'] = t('Ting search records per page controls');
-      $block['content'] = records_per_page_controls_content() ;
+      $block['content'] = ting_search_records_per_page_controls_content();
       break;
     case 'search-display-extended-query':
       drupal_add_css(drupal_get_path('module', 'ting_search') . '/ting_search_extendform.css');
