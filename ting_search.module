@@ -474,7 +474,8 @@ function ting_search_search_execute($keys = NULL, $conditions = NULL) {
     }   
     //check if request has been done before , if it has return the cached response saving us a lookup
     //in the data well.
-    $CachedQuery = ting_cache_get($query . "?page=" . $page);
+     $searchResult = ting_do_search($query, $page + 1, $resultsPerPage, $options);
+   /* $CachedQuery = ting_cache_get($query . "?page=" . $page);
     if($CachedQuery == null)
     {
          $searchResult = ting_do_search($query, $page + 1, $resultsPerPage, $options);
@@ -485,6 +486,8 @@ function ting_search_search_execute($keys = NULL, $conditions = NULL) {
         //return the cached well3 response. Saves allot of time.
         $searchResult = $CachedQuery;
     }
+    * 
+    */
     if (isset($searchResult->collections)) {
       $searchResult->search_key = $keys;
 
