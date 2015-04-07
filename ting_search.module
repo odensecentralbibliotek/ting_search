@@ -521,7 +521,9 @@ function oc_query_parser($q)
 {
     //Dont apply logic to statements containing keyword as they are  system generated with namespaces included.
     //Also helps so if users for some reason type in namespaces it wont bug.
-    $ExcludeList = array("term.","facet.","dkcclterm."); 
+    //Also allows system generated links to work.
+    $ExcludeList = array("term.","facet.","dkcclterm.","phrase.","rec.","scanphrase.","scanterm.","holdingsitem.",
+        "facet.","dkcclphrase."); 
     
     //Split the query based on conditional keywords(AND,OR,NOT)
     $tokens = explode("AND",$q);
@@ -531,13 +533,14 @@ function oc_query_parser($q)
     //Loop all tokens from the query.
     foreach($tokens as $index => $token)
     {
-        //check if it is excluded from parsing.
+        //check if it is excluded from parsing and already contains the needed namespace information.
         $IsExcluded = false;
         foreach($ExcludeList as $exclude)
         {
             if(strpos($token,$exclude) !== false)
             {
                 $IsExcluded = true;
+                break;
             }
         }
         if($IsExcluded == true)
@@ -554,11 +557,12 @@ function oc_query_parser($q)
                 //If first entry there is no leading " " to check for. so possible accuracy is lowered on first item.
                 if($index == 0)
                 {
-                    if(strpos($token,$ccl."=") !== false)
+                    if(strpos(" ".$token," ".$ccl."=") !== false)
                     {
                        //Unpack the ccl for well service. eks: ti becomes namespace.ti
                        $q = str_replace($ccl ."=",$namespace.".".$ccl."=" , $q);
                        $cclfound = true;
+                       continue;
                     }
                 }
                 else
@@ -569,6 +573,7 @@ function oc_query_parser($q)
                        //Unpack the ccl for well service. eks: ti becomes namespace.ti
                        $q = str_replace(" ". $ccl ."="," ".$namespace.".".$ccl."=" , $q);
                        $cclfound = true;
+                       continue;
                     }
                 }
                 
@@ -1178,6 +1183,43 @@ function InitCqlNamespaces()
         $namespaces["dkcclterm"][] = "vp";
         $namespaces["dkcclterm"][] = "ww";
         $namespaces["dkcclterm"][] = "år";
+        
+        $namespaces["term"][] = "accessType";
+        $namespaces["term"][] = "acSource";
+        $namespaces["term"][] = "acquisitionDate";
+        $namespaces["term"][] = "audience";
+        $namespaces["term"][] = "audienceRecommended";
+        $namespaces["term"][] = "audienceRestricted";
+        $namespaces["term"][] = "category";
+        $namespaces["term"][] = "creator";
+        $namespaces["term"][] = "date";
+        $namespaces["term"][] = "default";
+        $namespaces["term"][] = "description";
+        $namespaces["term"][] = "genre";
+        $namespaces["term"][] = "identifier";
+        $namespaces["term"][] = "isbn";
+        $namespaces["term"][] = "language";
+        $namespaces["term"][] = "literaryForm";
+        $namespaces["term"][] = "mainCreator";
+        $namespaces["term"][] = "mainTitle";
+        $namespaces["term"][] = "nationality";
+        $namespaces["term"][] = "onlineAccess";
+        $namespaces["term"][] = "partOf";
+        $namespaces["term"][] = "primaryLanguage";
+        $namespaces["term"][] = "publisher";
+        $namespaces["term"][] = "reviewedCreator";
+        $namespaces["term"][] = "reviewedIdentifier";
+        $namespaces["term"][] = "reviewedPublisher";
+        $namespaces["term"][] = "reviewedTitle";
+        $namespaces["term"][] = "reviewer";
+        $namespaces["term"][] = "source";
+        $namespaces["term"][] = "subject";
+        $namespaces["term"][] = "type";
+        $namespaces["term"][] = "title";
+        $namespaces["term"][] = "trackTitle";
+        $namespaces["term"][] = "typeCategory";
+        
+        $namespaces["phrase"][] = "titleSeries";
         
         variable_set('Cqlterms', $namespaces);
         return $namespaces;
