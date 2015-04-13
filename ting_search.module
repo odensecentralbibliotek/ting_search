@@ -437,7 +437,40 @@ function ting_search_conditions_callback($keys) {
   }
   return $conditions;
 }
-
+/**
+ * Checks if the searched value is isbn and makes sure it is valid formattet for
+ * the data well. The ISBN can look like this:
+ * 9788702113990 -> valid.
+ * 978-87-02-11399-0 -> not valid.
+ */
+function ting_isbn_escape($SearchString)
+{
+    //check if length is long enough to be a possible isbn number.
+    if(strlen($SearchString) >= 10)
+    {
+        $pos = strpos($SearchString, '-');
+        if ($pos !== false) {
+            $values = explode('-',$SearchString);
+            $IsIsbn = true;
+            foreach($values as $value)
+            {
+                if(!is_numeric($value))
+                {
+                    $IsIsbn = false;
+                }
+            }
+            if($IsIsbn == true)
+            {
+                return str_replace('-','',$SearchString);
+            }
+            else
+            {
+                return $SearchString;
+            }
+        }
+    }
+    return $SearchString;
+}
 /**
  * Implements hook_search_execute().
  */
@@ -455,7 +488,7 @@ function ting_search_search_execute($keys = NULL, $conditions = NULL) {
    {
      $conditions['sort'] = "date_descending";
    }
-   $query      = oc_query_parser(_ting_search_quote($keys));
+   $query      = oc_query_parser(_ting_search_quote(ting_isbn_escape($keys)));
    $options['numFacets'] = 25;
    module_load_include('client.inc', 'ting');
   // Extend query with selected facets
