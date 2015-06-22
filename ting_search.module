@@ -488,7 +488,7 @@ function ting_search_search_execute($keys = NULL, $conditions = NULL) {
    {
      $conditions['sort'] = "date_descending";
    }
-   $query      = oc_query_parser(_ting_search_quote(ting_isbn_escape($keys)));
+   $query = oc_query_parser(_ting_search_quote(ting_isbn_escape($keys)));
    $options['numFacets'] = 25;
    module_load_include('client.inc', 'ting');
   // Extend query with selected facets
@@ -553,12 +553,16 @@ function oc_query_parser($q)
 {
     //Dont apply logic to statements containing keyword as they are  system generated with namespaces included.
     //Also helps so if users for some reason type in namespaces it wont bug.
-    //Also allows system generated links to work.
+    //The parser will attempt to ensure that we follow the strict pattern.
+    //
     $ExcludeList = array("term.","facet.","dkcclterm.","phrase.","rec.","scanphrase.","scanterm.","holdingsitem.",
         "facet.","dkcclphrase."); 
     
     //Split the query based on conditional keywords(AND,OR,NOT)
-    $tokens = explode("AND",$q);
+    $replace_tokens = array('AND','OR','NOT');
+    $Split_String = preg_replace("/\([^)]+\)/","",$q); // remove all paranthese wrapped statements.
+    $Split_String = str_replace($replace_tokens, '#TOKEN#',$Split_String);
+    $tokens = explode("#TOKEN#",$Split_String);
     $CCLtokens = InitCqlNamespaces();
     $FinalQuery = "";
     
@@ -650,13 +654,17 @@ function oc_query_parser($q)
                        continue;
                     }
                 }
-                
             }
         }
-        if($cclfound == false)
+        if($cclfound == false && strlen($token)> 1)
         {
             //double qoute the free text search phrase
-            //$q = str_replace($token,'"' . $token . '" ' , $q);
+            if(substr_count($token,'"') < 2 && substr_count($token,'?') == 0)
+            {
+                //Sometimes it removed a much needed space. so we ensure
+                //there is enough whitespace always.
+                $q = str_replace($token,' "'.$token.'" ' , $q);
+            }
         }
     }
     return $q;
@@ -1009,7 +1017,7 @@ function ting_search_submit($form, &$form_state) {
   //Escape paranteser men ikke allerede escapede \( \)
   $pattern = '/([^\\\\])(\(|\)|\[|\])/';
   $replacement = '$1\\\\$2';
-  $keys = preg_replace($pattern, $replacement, $keys);
+ // $keys = preg_replace($pattern, $replacement, $keys);
   $fields = array();
 
   $extended_fields = array(
