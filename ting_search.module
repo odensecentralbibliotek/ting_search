@@ -521,7 +521,6 @@ function ting_search_search_execute($keys = NULL, $conditions = NULL) {
       // TODO: caching highes total_result know value of specific search
       //       at the moment we only know if there is one more page
       $total_results = ($page + 1) * $resultsPerPage + ($searchResult->more ? 1 : 0);
-
       pager_default_initialize($total_results, $resultsPerPage);
 
       foreach ($searchResult->collections as &$collection) {
@@ -657,7 +656,7 @@ function oc_query_parser($q)
         if($cclfound == false)
         {
             //double qoute the free text search phrase
-            $q = str_replace($token,'"' . $token . '" ' , $q);
+            //$q = str_replace($token,'"' . $token . '" ' , $q);
         }
     }
     return $q;
