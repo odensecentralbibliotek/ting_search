@@ -560,7 +560,7 @@ function oc_query_parser($q)
     
     //Split the query based on conditional keywords(AND,OR,NOT)
     $replace_tokens = array('AND','OR','NOT');
-    $Split_String = preg_replace("/\([^)]+\)/","",$q); // remove all paranthese wrapped statements.
+    $Split_String = preg_replace('/\((.*?)\"\)/',"",$q); // remove all paranthese wrapped statements.
     $Split_String = str_replace($replace_tokens, '#TOKEN#',$Split_String);
     $tokens = explode("#TOKEN#",$Split_String);
     $CCLtokens = InitCqlNamespaces();
