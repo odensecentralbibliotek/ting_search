@@ -659,7 +659,7 @@ function oc_query_parser($q)
         if($cclfound == false && strlen($token)> 1)
         {
             //double qoute the free text search phrase
-            if(substr_count($token,'"') < 2 && substr_count($token,'?') == 0)
+            if(substr_count($token,'"') < 2 && substr_count($token,'?') == 0 && substr_count($token,'*') == 0)
             {
                 //Sometimes it removed a much needed space. so we ensure
                 //there is enough whitespace always.
