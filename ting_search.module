@@ -102,7 +102,7 @@ function ting_search_get_extended_actions() {
  * @brief Implementation of hook_form_FORM_ID_alter() for form search_block_form.
  */
 function ting_search_form_search_form_alter(&$form, &$form_state, $form_id) {
-    $branches = null;
+    $branches = array();
     try
     {
         $branches = fbs_branches();
