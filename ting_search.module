@@ -105,7 +105,10 @@ function ting_search_form_search_form_alter(&$form, &$form_state, $form_id) {
     $branches = array();
     try
     {
-        $branches = fbs_branches();
+        if(function_exists('fbs_branches'))
+        {
+            $branches = fbs_branches();
+        }
     } catch (Exception $ex) {
 
     }
