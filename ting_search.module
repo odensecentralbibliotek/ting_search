@@ -108,6 +108,15 @@ function ting_search_form_search_form_alter(&$form, &$form_state, $form_id) {
         if(function_exists('fbs_branches'))
         {
             $branches = fbs_branches();
+            /*
+             * Make it work for datawell..they dont use the same values.
+             */
+            $new_branches = array();
+            foreach($branches as $key => $value)
+            {
+                $new_branches[$value] = $value;
+            }
+            $branches = $new_branches;
         }
     } catch (Exception $ex) {
 
@@ -225,9 +234,9 @@ function ting_search_form_search_form_alter(&$form, &$form_state, $form_id) {
       'description' => t('Enter dk5'),
       'type' => 'textfield',
     ),
-    'facet.branch' => array(
+    'holdingsitem.branch' => array(
       'key' => 'branch',
-      'index' => 'facet',
+      //'index' => 'facet',
       'title' => t('Branch'),
       'description' => t('Branch'),
       'type' => 'select',
@@ -240,9 +249,9 @@ function ting_search_form_search_form_alter(&$form, &$form_state, $form_id) {
       'description' => t('Year'),
       'type' => 'textfield',
     ),
-    'facet.department' => array(
+    'holdingsitem.department' => array(
       'key' => 'department',
-      'index' => 'facet',
+      //'index' => 'facet',
       'title' => t('Target'),
       'description' => t('Target'),
       'type' => 'select',
@@ -1040,14 +1049,14 @@ function ting_search_submit($form, &$form_state) {
     'type' => 'term.type',
     'source' => 'term.acSource',
     'dk5' => 'facet.dk5',
-    'branch' => 'facet.branch',
-    'department' => 'facet.department',
+    'branch' => 'holdingsitem.branch',
+    'department' => 'holdingsitem.department',
     'date' => 'term.date',
   );
 
   $extended_facet_fields = array(
-    'branch' => 'facets[]=facet.branch',
-    'department' => 'facets[]=facet.department',
+    //'branch' => 'facets[]=facet.branch',
+    //'department' => 'facets[]=facet.department',
   );
 
   // Extended fields.
@@ -1070,15 +1079,15 @@ function ting_search_submit($form, &$form_state) {
   $q = join(' AND ', $q);
 
   // Extended facet fields.
-  $f = $form_state['values']['branch'];
+  /*$f = $form_state['values']['branch'];
   if ($f != "") {
     $controls['facets[]'] = 'facet.branch:' . $f;
-  }
+  }*/
 
-  $f = $form_state['values']['department'];
+  /*$f = $form_state['values']['department'];
   if ($f != "") {
-    $controls['facets[]'] = 'facet.department:' . $f;
-  }
+    //$controls['facets[]'] = 'facet.department:' . $f;
+  }*/
   // Controls.
   $s = $form_state['values']['sort'];
   if ( $s != "" ) {
