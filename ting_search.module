@@ -1106,7 +1106,8 @@ function ting_search_submit($form, &$form_state) {
   // "field is required" because the search keywords field has no title.
   // The error message would also complain about a missing #title field.)
   if ($q == '') {
-    form_set_error('keys', t('Please enter some keywords.'));
+    $q  = "*";
+    //form_set_error('keys', t('Please enter some keywords.'));
   }
   $search_info = array();
   $request_path = arg();
