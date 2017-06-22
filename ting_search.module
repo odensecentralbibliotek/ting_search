@@ -1002,7 +1002,7 @@ function records_per_page_controls_content() {
   $size['#markup'] = '';
 
   foreach ($sizes as $number => $text) {
-    $pg = array('page' => 0);
+    $pg = array('page' => isset($_GET['page']) ? $_GET['page']: 0);
     $sz = array('size' => $number);
     $classes = array();
     $keys = array_keys($sizes);
