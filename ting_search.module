@@ -577,7 +577,7 @@ function oc_query_parser($q)
     //The parser will attempt to ensure that we follow the strict pattern.
     //
     $ExcludeList = array("term.","facet.","dkcclterm.","phrase.","rec.","scanphrase.","scanterm.","holdingsitem.",
-        "facet.","dkcclphrase."); 
+        "facet.","dkcclphrase.","bad>=","bad<=","bad=","bad&lt;=","bad&rt;=","bai=","bfi=","bur=","baf=","bmn=","bos=","bhs=","bdo="); 
     
     //Split the query based on conditional keywords(AND,OR,NOT)
     $replace_tokens = array('AND','OR','NOT');
@@ -1324,7 +1324,7 @@ function InitCqlNamespaces()
         $namespaces["term"][] = "typeCategory";
         
         $namespaces["phrase"][] = "titleSeries";
-        
+        $namespaces["phrase"][] = "creator";
         variable_set('Cqlterms', $namespaces);
         return $namespaces;
     }
