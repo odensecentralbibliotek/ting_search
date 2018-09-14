@@ -372,7 +372,8 @@ function ting_search_extract_keys($search_query, $keys) {
 
   ting_search_extract_indexes(NULL, $keys);
   $regexpes = array(
-    '/(^|\s+and\s+)\(([^)]+)\)$/i',
+    //'/(^|\s+and\s+)\(([^)]+)\)$/i',
+    '/(^|\s+and\s+)\(([^+]+)\)$/i',
   );
   foreach ($regexpes as $regexp) {
     $search_query = preg_replace_callback($regexp, 'ting_search_extract_indexes', $search_query);
