@@ -1188,6 +1188,7 @@ function ShortenCqlQueries($q)
 function InitCqlNamespaces()
 {
     //Check if already generated once , else reload.
+    variable_set('Cqlterms',null);
     if(variable_get('Cqlterms') != null)
     {
         return variable_get('Cqlterms');
@@ -1292,7 +1293,7 @@ function InitCqlNamespaces()
         
         $namespaces["term"][] = "accessType";
         $namespaces["term"][] = "acSource";
-        $namespaces["term"][] = "acquisitionDate";
+        //$namespaces["term"][] = "acquisitionDate"; deprecated
         $namespaces["term"][] = "audience";
         $namespaces["term"][] = "audienceRecommended";
         $namespaces["term"][] = "audienceRestricted";
@@ -1324,6 +1325,16 @@ function InitCqlNamespaces()
         $namespaces["term"][] = "title";
         $namespaces["term"][] = "trackTitle";
         $namespaces["term"][] = "typeCategory";
+        
+        $namespaces["holdingsitem"][] = "accessionDate";
+        $namespaces["holdingsitem"][] = "agencyId";
+        $namespaces["holdingsitem"][] = "branch";
+        $namespaces["holdingsitem"][] = "circulationRule";
+        $namespaces["holdingsitem"][] = "department";
+        $namespaces["holdingsitem"][] = "itemId";
+        $namespaces["holdingsitem"][] = "location";
+        $namespaces["holdingsitem"][] = "status";
+        $namespaces["holdingsitem"][] = "subLocation";        
         
         $namespaces["phrase"][] = "titleSeries";
         $namespaces["phrase"][] = "creator";
