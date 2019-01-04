@@ -578,12 +578,12 @@ function oc_query_parser($q)
     //Also helps so if users for some reason type in namespaces it wont bug.
     //The parser will attempt to ensure that we follow the strict pattern.
     //
-    $ExcludeList = array("term.","facet.","dkcclterm.","phrase.","rec.","scanphrase.","scanterm.","holdingsitem.",
+    $ExcludeList = array("term.","facet.","dkcclterm.","dkcclphrase.","phrase.","rec.","scanphrase.","scanterm.","holdingsitem.",
         "facet.","dkcclphrase.","bad>=","bad<=","bad=","bad&lt;=","bad&rt;=","bai=","bfi=","bur=","baf=","bmn=","bos=","bhs=","bdo="); 
     
     //Split the query based on conditional keywords(AND,OR,NOT)
     $replace_tokens = array('AND','OR','NOT');
-    $Split_String = preg_replace('/\((.*?)\"\)/',"",$q); // remove all paranthese wrapped statements.
+    //$Split_String = preg_replace('/\((.*?)\"\)/',"",$q); // remove all paranthese wrapped statements.
     $Split_String = str_replace($replace_tokens, '#TOKEN#',$Split_String);
     $tokens = explode("#TOKEN#",$Split_String);
     $CCLtokens = InitCqlNamespaces();
