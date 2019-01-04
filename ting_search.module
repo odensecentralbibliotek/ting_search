@@ -1291,6 +1291,61 @@ function InitCqlNamespaces()
         $namespaces["dkcclterm"][] = "ww";
         $namespaces["dkcclterm"][] = "år";
         
+        $namespace['dkcclphrase'][] = "bcm";
+        $namespace['dkcclphrase'][] = "dbk";
+        $namespace['dkcclphrase'][] = "ddc";
+        $namespace['dkcclphrase'][] = "lac";
+        $namespace['dkcclphrase'][] = "lag";
+        $namespace['dkcclphrase'][] = "lau";
+        $namespace['dkcclphrase'][] = "lbr";
+        $namespace['dkcclphrase'][] = "lcc";
+        $namespace['dkcclphrase'][] = "lcl";
+        $namespace['dkcclphrase'][] = "lcp";
+        $namespace['dkcclphrase'][] = "ldb";
+        $namespace['dkcclphrase'][] = "ldf";
+        $namespace['dkcclphrase'][] = "ldk";
+        $namespace['dkcclphrase'][] = "lds";
+        $namespace['dkcclphrase'][] = "led";
+        $namespace['dkcclphrase'][] = "lef";
+        $namespace['dkcclphrase'][] = "lek";
+        $namespace['dkcclphrase'][] = "lem";
+        $namespace['dkcclphrase'][] = "lep";
+        $namespace['dkcclphrase'][] = "les";
+        $namespace['dkcclphrase'][] = "lff";
+        $namespace['dkcclphrase'][] = "lfm";
+        $namespace['dkcclphrase'][] = "lfo";
+        $namespace['dkcclphrase'][] = "lgd";
+        $namespace['dkcclphrase'][] = "lht";
+        $namespace['dkcclphrase'][] = "lke";
+        $namespace['dkcclphrase'][] = "lkl";
+        $namespace['dkcclphrase'][] = "lkn";
+        $namespace['dkcclphrase'][] = "lko";
+        $namespace['dkcclphrase'][] = "lme";
+        $namespace['dkcclphrase'][] = "lmo";
+        $namespace['dkcclphrase'][] = "lms";
+        $namespace['dkcclphrase'][] = "lnb";
+        $namespace['dkcclphrase'][] = "lnt";
+        $namespace['dkcclphrase'][] = "lok";
+        $namespace['dkcclphrase'][] = "lpa";
+        $namespace['dkcclphrase'][] = "lpe";
+        $namespace['dkcclphrase'][] = "lpo";
+        $namespace['dkcclphrase'][] = "lrt";
+        $namespace['dkcclphrase'][] = "lse";
+        $namespace['dkcclphrase'][] = "lso";
+        $namespace['dkcclphrase'][] = "lst";
+        $namespace['dkcclphrase'][] = "lti";
+        $namespace['dkcclphrase'][] = "lts";
+        $namespace['dkcclphrase'][] = "ltt";
+        $namespace['dkcclphrase'][] = "luk";
+        $namespace['dkcclphrase'][] = "lut";
+        $namespace['dkcclphrase'][] = "lvp";
+        $namespace['dkcclphrase'][] = "lvx";
+        $namespace['dkcclphrase'][] = "mfo";
+        $namespace['dkcclphrase'][] = "mti";
+        $namespace['dkcclphrase'][] = "nal";
+        $namespace['dkcclphrase'][] = "nlm";
+        $namespace['dkcclphrase'][] = "udk";
+        
         $namespaces["term"][] = "accessType";
         $namespaces["term"][] = "acSource";
         //$namespaces["term"][] = "acquisitionDate"; deprecated
@@ -1338,6 +1393,7 @@ function InitCqlNamespaces()
         
         $namespaces["phrase"][] = "titleSeries";
         $namespaces["phrase"][] = "creator";
+        
         variable_set('Cqlterms', $namespaces);
         return $namespaces;
     }
