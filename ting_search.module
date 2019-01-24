@@ -40,7 +40,7 @@ function ting_search_menu_alter(&$items) {
   $items['search/meta']['title'] = 'Universal Search';
   $items['search/meta/%menu_tail']['title'] = 'Universal Search';
   $items['search/meta/%menu_tail']['load arguments'] = array('%map', '%index');
-    
+
 }
 
 /**
@@ -121,10 +121,25 @@ function ting_search_form_search_form_alter(&$form, &$form_state, $form_id) {
     } catch (Exception $ex) {
 
     }
-  
+
   $departments = module_invoke_all('oc_departments');
   $ting_well_data = array(
-    'type' => array_merge(array('' => "Vælg en type"), drupal_map_assoc(array_keys(variable_get('ting_well_types', array())))),
+    // old term.type 'type' => array_merge(array('' => "Vælg en type"), drupal_map_assoc(array_keys(variable_get('ting_well_types', array())))),
+    'type' => array(
+      '' => "Søg i alle",
+      'term.acsource=bibliotekskatalog AND (dk=sk OR dk=82* OR dk=83* OR dk=84* OR dk=85* OR dk=86* OR dk=87* OR dk=88.4* OR dk=88.6* OR dk=88.7* OR dk=88.8*) AND term.type=bog' => "Bøger (skønlitteratur)",
+      'term.acsource=bibliotekskatalog NOT (dk=sk OR dk=82* OR dk=83* OR dk=84* OR dk=85* OR dk=86* OR dk=87* OR dk=88.4* OR dk=88.6* OR dk=88.7* OR dk=88.8*) AND term.type=bog' => "Bøger (faglitteratur)",
+      'term.acsource any "pressreader rbdigital" OR (term.acsource=bibliotekskatalog AND ma=pe NOT ma=åp NOT ma=ms NOT ma=av NOT term.type=bog NOT term.type=spil NOT term.type=tegneserie NOT ma=tb NOT serie)' => "Tidsskrifter",
+      'ma=xe AND term.type=ebog AND sp=dan' => "Ebøger (sprog: dansk)",
+      'ma=xe AND term.type=ebog NOT sp=dan' => "Ebøger (andre sprog)",
+      'ma=ly NOT (dk=78* OR em=sprog*)' => "Lydbøger",
+      'term.acsource ANY "ebsco masterfile tidsskriftsartikler biography in context avisartikler store danske science in context litteratursiden historiens verden 1001 fortællinger forfatterweb faktalink"' => "Artikler",
+      'term.acsource=filmstriben OR (term.acsource=bibliotekskatalog AND term.workType=movie NOT (term.type=bog OR term.type="film (net)" OR ma=xc))' => "Film/DVD/Bluray/VHS",
+      '(ma=xc AND ma=lm) OR (ma=xc and ma=th) NOT (ma=mu OR ma=ly OR ma=xk OR dk=sk)' => "CD",
+      'ma=mu' => "Noder",
+      'ma=bg OR term.type=spil' => "Spil",
+      'term.type=tegneserie OR term.type="graphic novel"' => "Tegneserier",
+      ),
     'source' => array_merge(array('' => "Vælg en kilde"), drupal_map_assoc(array_keys(variable_get('ting_well_sources', array())))),
     'language' => array(
       '' => "Vælg et sprog",
@@ -161,7 +176,7 @@ function ting_search_form_search_form_alter(&$form, &$form_state, $form_id) {
    *  ~oe = ø
       ~aa = å
    *  ~ae = æ
-   * 
+   *
   */
   $SpecialCharBranchArray = array();
   foreach($ting_well_data['branch'] as $key => $Branch)
@@ -175,7 +190,7 @@ function ting_search_form_search_form_alter(&$form, &$form_state, $form_id) {
   {
       $ting_well_data['branch'] = $SpecialCharBranchArray; //Replace with new array.
   }
-  
+
   $advanced_fields = array(
     'term.title' => array(
       'key' => 'title',
@@ -230,7 +245,7 @@ function ting_search_form_search_form_alter(&$form, &$form_state, $form_id) {
     ),
     'dkcclterm.dk' => array(
       'key' => 'dk5',
-      
+
       'title' => t('dk5'),
       'description' => t('Enter dk5'),
       'type' => 'textfield',
@@ -345,7 +360,7 @@ function ting_search_form_search_form_alter(&$form, &$form_state, $form_id) {
     }
   }
   $form['#submit'] = array('ting_search_submit');
-  
+
   // This submits the form to a blank page and prevents the search to be
   // executed twice. See http://platform.dandigbib.org/issues/372 for more
   // information.
@@ -354,7 +369,7 @@ function ting_search_form_search_form_alter(&$form, &$form_state, $form_id) {
       if (isset($path_parts[1]) && $path_parts[1] != 'node') {
         $form['#action'] = '?q=search-blank';
       }
-  
+
   return $form;
 }
 
@@ -506,7 +521,7 @@ function ting_search_search_execute($keys = NULL, $conditions = NULL) {
    if (!isset($conditions['sort']) && stripos($keys, 'term.language=') == TRUE) {
      $conditions['sort'] = "date_descending";
    }
-   if ( !isset($conditions['sort']) && stripos($keys, 'term.type=dvd') == TRUE || 
+   if ( !isset($conditions['sort']) && stripos($keys, 'term.type=dvd') == TRUE ||
            stripos($keys, 'term.type=dvd-rom') == TRUE)
    {
      $conditions['sort'] = "date_descending";
@@ -524,7 +539,7 @@ function ting_search_search_execute($keys = NULL, $conditions = NULL) {
       }
     }
 
-    $query .= ' AND ' . implode(' AND ', $facetArray); 
+    $query .= ' AND ' . implode(' AND ', $facetArray);
   }
   try {
     $page = pager_find_page();
@@ -579,8 +594,8 @@ function oc_query_parser($q)
     //The parser will attempt to ensure that we follow the strict pattern.
     //
     $ExcludeList = array("term.","facet.","dkcclterm.","dkcclphrase.","phrase.","rec.","scanphrase.","scanterm.","holdingsitem.",
-        "facet.","dkcclphrase.","bad>=","bad<=","bad=","bad&lt;=","bad&rt;=","bai=","bfi=","bur=","baf=","bmn=","bos=","bhs=","bdo="); 
-    
+        "facet.","dkcclphrase.","bad>=","bad<=","bad=","bad&lt;=","bad&rt;=","bai=","bfi=","bur=","baf=","bmn=","bos=","bhs=","bdo=");
+
     //Split the query based on conditional keywords(AND,OR,NOT)
     $replace_tokens = array('AND','OR','NOT');
     $Split_String = preg_replace('/\([^()]*\)/',"",$q); // remove all paranthese wrapped statements.
@@ -588,7 +603,7 @@ function oc_query_parser($q)
     $tokens = explode("#TOKEN#",$Split_String);
     $CCLtokens = InitCqlNamespaces();
     $FinalQuery = "";
-    
+
     //Loop all tokens from the query.
     foreach($tokens as $index => $token)
     {
@@ -606,11 +621,11 @@ function oc_query_parser($q)
         {
             continue;
         }
-        
+
         $cclfound = false;
         //if contains ccl dont double qoute else do it!
         foreach($CCLtokens as $namespace => $values)
-        {   
+        {
             foreach( $values as $ccl)
             {
                 //If first entry there is no leading " " to check for. so possible accuracy is lowered on first item.
@@ -697,7 +712,7 @@ function oc_query_parser($q)
  */
 function oc_enforce_ccl_strict($ccl)
 {
-    
+
 }
 /**
  * Implements hook_search_page().
@@ -1048,7 +1063,7 @@ function ting_search_submit($form, &$form_state) {
     'title' => 'term.title',
     'subject' => 'term.subject',
     'language' => 'term.language',
-    'type' => 'term.type',
+    'type' => '',
     'source' => 'term.acSource',
     'dk5' => 'dkcclterm.dk',
     'branch' => 'holdingsitem.branch',
@@ -1061,20 +1076,20 @@ function ting_search_submit($form, &$form_state) {
     'category' => 'facets[]=facet.category',
   );
 
-  // Extended fields.
+  /**
   foreach ($extended_fields as $name => $index) {
     if (!empty($form_state['values'][$name])) {
       $value = $form_state['values'][$name];
       $fields[] = $index . '=' . (strpos($value, ' ') ? '"' . $value . '"' : $value);
     }
   }
-
+  */
   $q = array();
   if (!empty($keys)) {
     $q[] = $keys;
     $q = $q;
   }
-  
+
   if (!empty($fields)) {
     $q[] = '(' . implode(' AND ', $fields) . ')';
   }
@@ -1157,7 +1172,7 @@ function ExpandCqlQueries($q)
                }
            }
        }
-        
+
     }
     return $q;
 }
@@ -1180,9 +1195,9 @@ function ShortenCqlQueries($q)
                }
            }
        }
-        
+
     }
-    
+
     return $q;
 }
 function InitCqlNamespaces()
@@ -1197,7 +1212,7 @@ function InitCqlNamespaces()
     {
         $namespaces = array();
         //$namespaces["dkcclphrase"] = array();
-        $namespaces["dkcclterm"][] = "ac"; //using short hand might give problems ? 
+        $namespaces["dkcclterm"][] = "ac"; //using short hand might give problems ?
         $namespaces["dkcclterm"][] = "ag";
         $namespaces["dkcclterm"][] = "aj";
         $namespaces["dkcclterm"][] = "ar";
@@ -1290,7 +1305,7 @@ function InitCqlNamespaces()
         $namespaces["dkcclterm"][] = "vp";
         $namespaces["dkcclterm"][] = "ww";
         $namespaces["dkcclterm"][] = "år";
-        
+
         $namespaces['dkcclphrase'][] = "bcm";
         $namespaces['dkcclphrase'][] = "dbk";
         $namespaces['dkcclphrase'][] = "ddc";
@@ -1345,7 +1360,7 @@ function InitCqlNamespaces()
         $namespaces['dkcclphrase'][] = "nal";
         $namespaces['dkcclphrase'][] = "nlm";
         $namespaces['dkcclphrase'][] = "udk";
-        
+
         $namespaces["term"][] = "accessType";
         $namespaces["term"][] = "acSource";
         //$namespaces["term"][] = "acquisitionDate"; deprecated
@@ -1380,7 +1395,7 @@ function InitCqlNamespaces()
         $namespaces["term"][] = "title";
         $namespaces["term"][] = "trackTitle";
         $namespaces["term"][] = "typeCategory";
-        
+
         $namespaces["holdingsitem"][] = "accessionDate";
         $namespaces["holdingsitem"][] = "agencyId";
         $namespaces["holdingsitem"][] = "branch";
@@ -1389,15 +1404,15 @@ function InitCqlNamespaces()
         $namespaces["holdingsitem"][] = "itemId";
         $namespaces["holdingsitem"][] = "location";
         $namespaces["holdingsitem"][] = "status";
-        $namespaces["holdingsitem"][] = "subLocation";        
-        
+        $namespaces["holdingsitem"][] = "subLocation";
+
         $namespaces["phrase"][] = "titleSeries";
         $namespaces["phrase"][] = "creator";
-        
+
         variable_set('Cqlterms', $namespaces);
         return $namespaces;
     }
-    
+
 }
 /**
  * Attempt to quote reserved words in a search query.
