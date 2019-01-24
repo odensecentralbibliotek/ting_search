@@ -1076,14 +1076,15 @@ function ting_search_submit($form, &$form_state) {
     'category' => 'facets[]=facet.category',
   );
 
-  /**
+  
   foreach ($extended_fields as $name => $index) {
     if (!empty($form_state['values'][$name])) {
       $value = $form_state['values'][$name];
-      $fields[] = $index . '=' . (strpos($value, ' ') ? '"' . $value . '"' : $value);
+      //$fields[] = $index . '=' . (strpos($value, ' ') ? '"' . $value . '"' : $value);
+      $fields[] = $index  . (strpos($value, ' ') ?  $value : $value);
     }
   }
-  */
+  
   $q = array();
   if (!empty($keys)) {
     $q[] = $keys;
