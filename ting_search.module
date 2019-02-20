@@ -93,7 +93,6 @@ function ting_search_theme() {
     ),
     'ting_collection_teaser' => array(
       'variables' => array('object' => NULL),
-      'file'      => 'ting_search.pages.inc',
       'template'  => 'templates/ting_collection_teaser',
     ),
   );
