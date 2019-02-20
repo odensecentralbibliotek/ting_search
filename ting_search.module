@@ -91,6 +91,10 @@ function ting_search_theme() {
     'ting_search_extended_search' => array(
       'template' => 'ting-search-extended-search',
     ),
+    'ting_collection_teaser' => array(
+      'variables' => array('object' => NULL),
+      'template'  => 'templates/ting_collection_teaser',
+    ),
   );
 }
 
@@ -562,7 +566,7 @@ function ting_search_search_execute($keys = NULL, $conditions = NULL) {
       pager_default_initialize($total_results, $resultsPerPage);
 
       foreach ($searchResult->collections as &$collection) {
-        $build = ting_collection_view($collection, 'teaser');
+        //$build = ting_collection_view($collection, 'teaser');
         $uri = entity_uri('ting_collection', $collection);
         $results[] = array(
           'link' => url($uri['path'], $uri['options']),
@@ -570,7 +574,7 @@ function ting_search_search_execute($keys = NULL, $conditions = NULL) {
           'title' => $collection->title,
           'user' => '',
           'date' => '',
-          'snippet' => drupal_render($build),
+          'snippet' => theme('ting_collection_teaser',array('object' => $collection)),
         );
       }
     }
