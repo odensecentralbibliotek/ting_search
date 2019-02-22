@@ -2,7 +2,7 @@
 $collection_fields = field_info_instances('ting_collection');
 $object_fields = field_info_instances('ting_object');
 $uri = entity_uri('ting_collection', $object);
-$faust = $object->ting_primary_object['und'][0]['id'];
+$faust = $object->getPrimary_object()->id;
 $primary_object = entity_load('ting_object',array(),array('ding_entity_id' => array($faust))); 
 $primary_object = reset($primary_object);
 ?>
