@@ -128,8 +128,8 @@ function ting_search_form_search_form_alter(&$form, &$form_state, $form_id) {
 
   $departments = module_invoke_all('oc_departments');
   $ting_well_data = array(
-    // old term.type 'type' => array_merge(array('' => "Vælg en type"), drupal_map_assoc(array_keys(variable_get('ting_well_types', array())))),
-    'type' => array(
+    'type' => array_merge(array('' => "Vælg en type"), drupal_map_assoc(array_keys(variable_get('ting_well_types', array())))),
+    /*'type' => array(
       '' => "Søg i alle",
       'term.acsource=bibliotekskatalog AND (dk=sk OR dk=82* OR dk=83* OR dk=84* OR dk=85* OR dk=86* OR dk=87* OR dk=88.4* OR dk=88.6* OR dk=88.7* OR dk=88.8*) AND term.type=bog' => "Bøger (skønlitteratur)",
       'term.acsource=bibliotekskatalog NOT (dk=sk OR dk=82* OR dk=83* OR dk=84* OR dk=85* OR dk=86* OR dk=87* OR dk=88.4* OR dk=88.6* OR dk=88.7* OR dk=88.8*) AND term.type=bog' => "Bøger (faglitteratur)",
@@ -143,7 +143,7 @@ function ting_search_form_search_form_alter(&$form, &$form_state, $form_id) {
       'ma=mu' => "Noder",
       'ma=bg OR term.type=spil' => "Spil",
       'term.type=tegneserie OR term.type="graphic novel"' => "Tegneserier",
-      ),
+      ),*/
     'source' => array_merge(array('' => "Vælg en kilde"), drupal_map_assoc(array_keys(variable_get('ting_well_sources', array())))),
     'language' => array(
       '' => "Vælg et sprog",
