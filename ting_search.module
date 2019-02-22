@@ -1067,7 +1067,7 @@ function ting_search_submit($form, &$form_state) {
     'title' => 'term.title',
     'subject' => 'term.subject',
     'language' => 'term.language',
-    'type' => '',
+    'type' => 'term.type',
     'source' => 'term.acSource',
     'dk5' => 'dkcclterm.dk',
     'branch' => 'holdingsitem.branch',
