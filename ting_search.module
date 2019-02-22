@@ -1084,8 +1084,8 @@ function ting_search_submit($form, &$form_state) {
   foreach ($extended_fields as $name => $index) {
     if (!empty($form_state['values'][$name])) {
       $value = $form_state['values'][$name];
-      //$fields[] = $index . '=' . (strpos($value, ' ') ? '"' . $value . '"' : $value);
-      $fields[] = $index  . (strpos($value, ' ') ?  $value : $value);
+      $fields[] = $index . '=' . (strpos($value, ' ') ? '"' . $value . '"' : $value);
+      //$fields[] = $index  . (strpos($value, ' ') ?  $value : $value);
     }
   }
   
