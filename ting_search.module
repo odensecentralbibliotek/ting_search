@@ -556,7 +556,7 @@ function ting_search_search_execute($keys = NULL, $conditions = NULL) {
     if (!empty($conditions['sort'])) {
       $options['sort'] = $conditions['sort'];
     }
-    $searchResult = ting_do_search($query, $page + 1, $resultsPerPage, $options);
+    $searchResult = ting_do_search( str_replace("term.acSource=materialevurderinger", "facet.acSource=materialevurderinger", $query) , $page + 1, $resultsPerPage, $options);
     if (isset($searchResult->collections)) {
       $searchResult->search_key = $keys;
 
